@@ -68,17 +68,21 @@ class Model:
         arr_var = self.arr_var
         dim = self.dim
         results = [0] * dim
+        count_perm = 0
         for i in range(0, dim - 1):
             if matrix[i][i] == 0:
                 matrix = self.change_lines(matrix, i)
+                count_perm += 1
             for k in range(i + 1, dim):
                 c = matrix[k][i] / matrix[i][i]
                 matrix[k][i] = 0
                 for j in range(i + 1, dim):
                     matrix[k][j] = matrix[k][j] - c * matrix[i][j]
                 arr_var[k] = arr_var[k] - c * arr_var[i]
-        print("Triangle matrix: ")
-        self.print_task(matrix, arr_var)
+        self.print_triangle_matrix(matrix, arr_var)
+        det = self.triangle_det(matrix, count_perm)
+        if self.check_det(det) == 0:
+            return -1
         for i in range(dim - 1, -1, -1):
             s = 0
             for j in range(i + 1, dim):
@@ -111,3 +115,22 @@ class Model:
             for j in range(self.dim):
                 print("{: <9}".format(round(matrix[i][j], 5)), end="  ")
             print("|  = ", round(arr_var[i], 5), "\n")
+
+    def print_triangle_matrix(self, matrix, arr_var):
+        print("Triangle matrix: ")
+        self.print_task(matrix, arr_var)
+
+    def check_det(self, det):
+        if det != 0:
+            print("Determinant:", det, "\n")
+            return 1
+        else:
+            print("Determinant of matrix = 0, please try another matrix!")
+            return 0
+
+    def triangle_det(self, matrix, count_perm):
+        dim = self.dim
+        p = 1
+        for i in range(dim):
+            p *= matrix[i][i]
+        return p * (-1) ** count_perm

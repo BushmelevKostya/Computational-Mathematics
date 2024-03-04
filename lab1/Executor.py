@@ -86,7 +86,7 @@ class Executor:
                         dim = fileReader.read_dim()
                         self.dim = dim
                         self.matrix = fileReader.read_matrix(dim)
-                        self.arr_var = fileReader.read_vars()
+                        self.arr_var = fileReader.read_vars(dim)
                         break
                     except FileNotFoundError as e:
                         print(e.args[0])
@@ -103,8 +103,9 @@ class Executor:
         print("Input dimension:", dim, "\n")
         print("Input matrix:")
         model.print_task(matrix, arr_var)
-        print("Determinant:", model.det(), "\n")
         results = model.G_alg()
+        if results == -1:
+            return
         print("Values of answers:")
         model.print_answers(results)
         errors = model.calc_errors(results)
