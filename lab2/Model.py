@@ -79,7 +79,7 @@ class Model:
                 for j in range(i + 1, dim):
                     matrix[k][j] = matrix[k][j] - c * matrix[i][j]
                 arr_var[k] = arr_var[k] - c * arr_var[i]
-        self.print_triangle_matrix(matrix, arr_var)
+        # self.print_triangle_matrix(matrix, arr_var)
         det = self.triangle_det(matrix, count_perm)
         if self.check_det(det) == 0:
             return -1
@@ -122,10 +122,10 @@ class Model:
 
     def check_det(self, det):
         if det != 0:
-            print("Determinant:", det, "\n")
+            # print("Determinant:", det, "\n")
             return 1
         else:
-            print("Determinant of matrix = 0, please try another matrix!")
+            # print("Determinant of matrix = 0, please try another matrix!")
             return 0
 
     def triangle_det(self, matrix, count_perm):

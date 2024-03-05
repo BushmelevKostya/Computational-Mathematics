@@ -1,3 +1,6 @@
+from Model import *
+
+
 class SLAEModel:
 
     def print_answers(self, dim, arr_var):
@@ -51,3 +54,19 @@ class SLAEModel:
             approx[0] = approx[1]
             n += 1
         self.print_answers(dim, [approx[1], self.calc_func(coefficients, dim, approx[1]), n])
+
+    def Newton_alg_1(self, approx, error, dim):
+        coefficients = [[0, 0], [0, 0]]
+        arr_values = [0, 0]
+        n = 1
+        while 1:
+            coefficients[0][0], coefficients[0][1], coefficients[1][0], coefficients[1][1] = 2 * approx[0], 2 * approx[
+                1], -6 * approx[0], 1
+            arr_values[0], arr_values[1] = 4 - approx[0] ** 2 - approx[1] ** 2, 3 * approx[0] ** 2 - approx[1]
+            model = Model(2, coefficients, arr_values)
+            temp = approx
+            approx[0], approx[1] = approx[0] + model.G_alg()[0], approx[1] + model.G_alg()[1]
+            if abs(approx[0] - temp[0]) <= error and abs(approx[1] - temp[1]) <= error:
+                break
+            n += 1
+        self.print_answers(dim, [approx[0], approx[1], n])

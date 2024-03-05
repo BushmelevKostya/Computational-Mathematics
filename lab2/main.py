@@ -19,3 +19,6 @@ if __name__ == '__main__':
     approx = [-4, 0]
     degree = 1 / 3
     model.simple_iteration_alg(approx, coefficients, new_coefficients, 3, degree, error)
+
+    approx = [0, 0]
+    model.Newton_alg_1(approx, error, 3)
