@@ -2,7 +2,7 @@ import math
 
 from Randomizer import *
 from FileReader import *
-from Model import *
+from SLAEModel import *
 
 
 class Executor:
@@ -10,89 +10,104 @@ class Executor:
         self.dim = 1
         self.matrix = [[1]]
         self.arr_var = [1]
+        self.model = SLAEModel()
 
     def say_hello(self):
-        print("Hello! Please enter:\n1 for independent input\n2 for file input\n>>>", end=" ")
+        print("Hello! Please enter:\n1 for linear equaiton\n2 for unlinear equation\n>>>", end=" ")
         while 1:
             s = input().strip()
             if s == "1":
-                print("Enter dimension of matrix, 1 <= dim <= 20\n>>>", end=" ")
-                while 1:
-                    try:
-                        dim = int(input())
-                        if dim < 1 or dim > 20:
-                            raise ValueError
-                        break
-                    except ValueError:
-                        print("Dimension must be a integer number from 1 to 20")
-                self.dim = dim
-                print("Enter:\n1 for automatic matrix generation\n2 for independent input\n>>>", end=" ")
+                print("Enter number of system:\n"
+                      "1 - f(x, y) = x^3 + 2.84x^2-5.606x-14.766\n"
+                      "2 - f(x) = x^5 - 8*x^2 - 4\n"
+                      "3 - f(x) = ln((x-3)^2)-cos(x) + 6\n"
+                      ">>>", end=" ")
                 while 1:
                     s = input().strip()
                     if s == "1":
-                        randomizer = Randomizer(dim)
-                        self.matrix = randomizer.generate_matrix()
-                        self.arr_var = randomizer.generate_vars()
+                        dim = 3
+                        borders = self.input_approx(2)
+                        error = self.input_error()
+                        coefficients = [-14.766, -5.606, 2.84, 1]
+                        self.model.bisection_alg(borders, coefficients, dim, error)
                         break
                     elif s == "2":
-                        matrix = [[0.0] * dim for _ in range(dim)]
-                        arr_var = [0.0] * dim
-                        model = Model(dim, matrix, arr_var)
-                        model.print_task(matrix, arr_var)
-                        print("Enter the coefficients of matrix using enter\n>>>", end=" ")
-                        for i in range(dim):
-                            for j in range(dim):
-                                while 1:
-                                    try:
-                                        s = float(input())
-                                        if math.isinf(s):
-                                            raise ArithmeticError("Value is too big")
-                                        matrix[i][j] = s
-                                        break
-                                    except ValueError:
-                                        print("Coefficient must be a number")
-                                    except ArithmeticError as e:
-                                        print(str(e))
-                                model.print_task(matrix, arr_var)
-                        self.matrix = matrix
-                        print("Enter the variables using enter\n>>>", end=" ")
-                        for i in range(dim):
-                            while 1:
-                                try:
-                                    s = float(input())
-                                    if math.isinf(s):
-                                        raise ArithmeticError("Value is too big")
-                                    arr_var[i] = s
-                                    break
-                                except ValueError:
-                                    print("Variable must be a number")
-                                except ArithmeticError as e:
-                                    print(str(e))
-                            model.print_task(matrix, arr_var)
-                        self.arr_var = arr_var
+                        dim = 5
+                        approx = self.input_approx(2)
+                        error = self.input_error()
+                        coefficients = [-4, 0, -8, 0, 0, 1]
+                        self.model.secant_alg(approx, coefficients, dim, error)
                         break
+                    elif s == "3":
+                        approx = self.input_approx(2)
+                        error = self.input_error()
+                        self.model.simple_iteration_transcendental_alg(approx, error)
                     else:
-                        print("Enter:\n1 for automatic matrix generation\n2 for independent input\n>>>", end=" ")
+                        continue
                 break
             elif s == "2":
                 while 1:
-                    print("Enter name of file\n>>>", end=" ")
+                    print("Enter number of equation:\n"
+                          "1 - f(x, y) = x^2 + y^2 -4, g(x, y) = y - 3 * x^2\n"
+                          "2 - f(x, y) = cos(x-1) + y - 0.5, g(x, y) = x - cos(y) - 3\n"
+                          ">>>", end=" ")
                     s = input().strip()
-                    if s == "":
-                        continue
-                    path = "input/" + s
-                    fileReader = FileReader(path)
-                    try:
-                        dim = fileReader.read_dim()
-                        self.dim = dim
-                        self.matrix = fileReader.read_matrix(dim)
-                        self.arr_var = fileReader.read_vars(dim)
+                    if s == "1":
+                        approx = self.input_approx(2)
+                        error = self.input_error()
+                        self.model.Newton_alg(approx, error, 3)
                         break
-                    except FileNotFoundError as e:
-                        print(e.args[0])
+                    elif s == "2":
+                        approx = self.input_approx(2)
+                        error = self.input_error()
+                        self.model.Newton_transcendental_alg(approx, error, 3)
+                        break
+                    else:
+                        continue
                 break
             else:
-                print("Please enter:\n1 for independent input\n2 for file input\n>>>", end=" ")
+                print("Please enter:\n1 for linear equaiton\n2 for unlinear equation\n>>>", end=" ")
+
+    def input_approx(self, dim):
+        print("Please enter interval or approximate:\n1 for independent input\n2 for file input\n>>>", end=" ")
+        s = input().strip()
+        approx = [0, 0]
+        if s == "1":
+            approx[0], approx[1] = float(input())
+        elif s == "2":
+            while 1:
+                s = input().strip()
+                if s == "":
+                    continue
+                path = "input/" + s
+                fileReader = FileReader(path)
+                try:
+                    approx = fileReader.read_vars(dim)
+                    break
+                except FileNotFoundError as e:
+                    print(e.args[0])
+        return approx
+
+    def input_error(self):
+        print("Please enter error:\n1 for independent input\n2 for file input\n>>>", end=" ")
+        s = input().strip()
+        error = 0
+        if s == "1":
+            error = float(input())
+        elif s == "2":
+            while 1:
+                s = input().strip()
+                if s == "":
+                    continue
+                path = "input/" + s
+                fileReader = FileReader(path)
+                try:
+                    error = fileReader.read_vars(1)
+                    break
+                except FileNotFoundError as e:
+                    print(e.args[0])
+        return error
+
 
     def do_task(self):
         dim = self.dim
