@@ -6,7 +6,7 @@ class SLAEModel:
 
     def print_answers(self, dim, arr_var):
         for i in range(dim):
-            print("x", i + 1, " = ", round(arr_var[i], 5), sep="")
+            print(i + 1, " = ", round(arr_var[i], 5), sep="")
         print()
 
     def calc_func(self, coefficients, dim, dot):
@@ -27,7 +27,7 @@ class SLAEModel:
                 borders[1] = x
             n += 1
         x = (borders[0] + borders[1]) / 2
-        self.print_answers(dim, [x, self.calc_func(coefficients, dim, x), n])
+        self.print_answers(3, [x, self.calc_func(coefficients, dim, x), n])
 
     def secant_alg(self, approx, coefficients, dim, error):
         n = 0
@@ -39,7 +39,7 @@ class SLAEModel:
             next_y = self.calc_func(coefficients, dim, approx[1])
             func_values[0], func_values[1] = func_values[1], next_y
             n += 1
-        self.print_answers(dim, [approx[1], self.calc_func(coefficients, dim, approx[1]), n])
+        self.print_answers(3, [approx[1], self.calc_func(coefficients, dim, approx[1]), n])
 
     def simple_iteration_alg(self, approx, coefficients, new_coefficients, dim, degree, error):
         n = 1
@@ -54,7 +54,7 @@ class SLAEModel:
                 break
             approx[0] = approx[1]
             n += 1
-        self.print_answers(dim, [approx[1], self.calc_func(coefficients, dim, approx[1]), n])
+        self.print_answers(3, [approx[1], self.calc_func(coefficients, dim, approx[1]), n])
 
     def simple_iteration_transcendental_alg(self, approx, error):
         n = 1

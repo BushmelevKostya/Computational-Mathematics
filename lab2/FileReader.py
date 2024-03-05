@@ -23,7 +23,10 @@ class FileReader:
     def read_vars(self, dim):
         try:
             with open(self.filepath, "r") as file:
-                data = list(map(float, file.readlines()[-1].replace(",", ".").strip().split(" ")))
+                if dim != 1:
+                    data = list(map(float, file.readlines()[0].replace(",", ".").strip().split(" ")))
+                else:
+                    data = list(map(float, file.readlines()[1].replace(",", ".").strip().split(" ")))
                 if len(data) < dim:
                     raise IndexError
             return data

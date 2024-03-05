@@ -18,9 +18,9 @@ class Executor:
             s = input().strip()
             if s == "1":
                 print("Enter number of system:\n"
-                      "1 - f(x, y) = x^3 + 2.84x^2-5.606x-14.766\n"
+                      "1 - f(x) = x^3 + 2.84x^2-5.606x-14.766\n"
                       "2 - f(x) = x^5 - 8*x^2 - 4\n"
-                      "3 - f(x) = ln((x-3)^2)-cos(x) + 6\n"
+                      "3 - f(x) = 2^x - cos(x) - 3\n"
                       ">>>", end=" ")
                 while 1:
                     s = input().strip()
@@ -42,6 +42,7 @@ class Executor:
                         approx = self.input_approx(2)
                         error = self.input_error()
                         self.model.simple_iteration_transcendental_alg(approx, error)
+                        break
                     else:
                         continue
                 break
@@ -69,11 +70,12 @@ class Executor:
                 print("Please enter:\n1 for linear equaiton\n2 for unlinear equation\n>>>", end=" ")
 
     def input_approx(self, dim):
-        print("Please enter interval or approximate:\n1 for independent input\n2 for file input\n>>>", end=" ")
+        print("Please enter how to set interval or approximate:\n1 for independent input\n2 for file input\n>>>", end=" ")
         s = input().strip()
         approx = [0, 0]
         if s == "1":
-            approx[0], approx[1] = float(input())
+            print("Please enter interval or approximate with enter\n>>>", end=" ")
+            approx[0], approx[1] = float(input()), float(input())
         elif s == "2":
             while 1:
                 s = input().strip()
@@ -89,20 +91,22 @@ class Executor:
         return approx
 
     def input_error(self):
-        print("Please enter error:\n1 for independent input\n2 for file input\n>>>", end=" ")
+        print("Please enter how to set error:\n1 for independent input\n2 for file input\n>>>", end=" ")
         s = input().strip()
         error = 0
         if s == "1":
+            print("Please enter error\n>>>", end=" ")
             error = float(input())
         elif s == "2":
             while 1:
+                print("Please enter name of file\n>>>", end=" ")
                 s = input().strip()
                 if s == "":
                     continue
                 path = "input/" + s
                 fileReader = FileReader(path)
                 try:
-                    error = fileReader.read_vars(1)
+                    error = fileReader.read_vars(1)[0]
                     break
                 except FileNotFoundError as e:
                     print(e.args[0])
