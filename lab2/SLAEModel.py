@@ -1,10 +1,11 @@
 import math
+import sympy as sp
 
 from FileReader import FileReader
 from Model import *
 
-class SLAEModel:
 
+class SLAEModel:
     def print_answers(self, dim, arr_var, keys):
         print("Please enter:\n"
               "1 for console output\n"
@@ -71,21 +72,23 @@ class SLAEModel:
         keys = ["x", "f(x)", "count of operation"]
         self.print_answers(3, [approx[1], self.calc_func(coefficients, dim, approx[1]), n], keys)
 
-    def simple_iteration_alg(self, approx, coefficients, new_coefficients, dim, degree, error):
-        n = 1
-        while 1:
-            res_func = self.calc_func(new_coefficients, len(new_coefficients) - 1, approx[0])
-            if res_func < 0:
-                approx[1] = - (abs(res_func) ** degree)
-            else:
-                approx[1] = abs(res_func) ** degree
+    def simple_iteration_alg(self, approx, coefficients, dim, error):
+        f = sum(coefficients[i] * approx[0] ** i for i in range(len(coefficients)))
+        df = sp.diff(f, approx[0])
+        g = approx[0] - f / df
 
-            if abs(approx[1] - approx[0]) < error:
-                break
-            approx[0] = approx[1]
+        g_func = sp.lambdify(approx[0], g, 'numpy')
+
+        xn = approx[1]
+        n = 0
+        while 1:
             n += 1
+            xn_plus_1 = g_func(xn)
+            if abs(xn_plus_1 - xn) < error:
+                break
+            xn = xn_plus_1
         keys = ["x", "f(x)", "count of operation"]
-        self.print_answers(3, [approx[1], self.calc_func(coefficients, dim, approx[1]), n], keys)
+        self.print_answers(dim, [xn_plus_1, g_func(xn_plus_1), n], keys)
 
     def simple_iteration_transcendental_alg(self, approx, error):
         n = 1
@@ -121,8 +124,10 @@ class SLAEModel:
         n = 1
         while 1:
             coefficients[0][0], coefficients[0][1], coefficients[1][0], coefficients[1][1] = (math.sin(approx[0]) - 1,
-                                                                                              0, 0, - math.sin(approx[1]))
-            arr_values[0], arr_values[1] = -0.5 + approx[1] + math.cos(approx[0] - 1), -3 + approx[0] - math.cos(approx[1])
+                                                                                              0, 0,
+                                                                                              - math.sin(approx[1]))
+            arr_values[0], arr_values[1] = -0.5 + approx[1] + math.cos(approx[0] - 1), -3 + approx[0] - math.cos(
+                approx[1])
             model = Model(2, coefficients, arr_values)
             temp = approx
             approx[0], approx[1] = approx[0] + model.G_alg()[0], approx[1] + model.G_alg()[1]
@@ -131,3 +136,26 @@ class SLAEModel:
             n += 1
         keys = ["x", "y", "count of operation"]
         self.print_answers(dim, [approx[0], approx[1], n], keys)
+
+    def create_polinim(self, num):
+        coefficients = []
+        if num == 1:
+            x = sp.Symbol('x')
+            f = 2 ** x - sp.cos(x - 1) - 3
+            taylor_series = f.series(x, 0, 5).removeO()
+            coefficients = [taylor_series.coeff(x, i).evalf() for i in range(6)]
+        return coefficients
+
+    def do_task(self, approx, coefficients, dim, error, number):
+        if number == 1:
+            self.bisection_alg(approx, coefficients, dim, error)
+        elif number == 2:
+            self.secant_alg(approx, coefficients, dim, error)
+        elif number == 3:
+            approx[0] = sp.Symbol('x')
+            self.simple_iteration_alg(approx, coefficients, dim, error)
+
+    def check_roots(self, coefficients, x):
+        x = sp.Symbol('x')
+        f = sum(coefficients[i] * x ** i for i in range(len(coefficients)))
+        return polynomial

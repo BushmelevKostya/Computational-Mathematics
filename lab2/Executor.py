@@ -27,7 +27,7 @@ class Executor:
                         borders = [inp[0], inp[1]]
                         error = inp[2]
                         coefficients = [-14.766, -5.606, 2.84, 1]
-                        self.model.bisection_alg(borders, coefficients, dim, error)
+                        self.model.do_task(borders, coefficients, dim, error, inp[3])
                         break
                     elif s == "2":
                         dim = 5
@@ -35,13 +35,15 @@ class Executor:
                         approx = [inp[0], inp[1]]
                         error = inp[2]
                         coefficients = [-4, 0, -8, 0, 0, 1]
-                        self.model.secant_alg(approx, coefficients, dim, error)
+                        self.model.do_task(approx, coefficients, dim, error, inp[3])
                         break
                     elif s == "3":
+                        dim = 6
                         inp = self.all_input(2)
                         approx = [inp[0], inp[1]]
                         error = inp[2]
-                        self.model.simple_iteration_transcendental_alg(approx, error)
+                        coefficients = self.model.create_polinim(1)
+                        self.model.do_task(approx, coefficients, dim, error, inp[3])
                         break
                     else:
                         print("Wrong value! Enter number of system:\n"
@@ -81,11 +83,26 @@ class Executor:
             "Please enter how to set interval or approximate and error:\n1 for independent input\n2 for file input\n>>>",
             end=" ")
         s = input().strip()
-        all_input = [0, 0, 0]
+        while 1:
+            print("Please enter method:\n"
+                  "1 - bisection\n"
+                  "2 - secant\n"
+                  "3 - simple iteration\n>>>",
+                  end=" ")
+            try:
+                number = int(input())
+                if number != 1 and number != 2 and number != 3:
+                    continue
+                break
+            except ValueError:
+                print("Wrong value!")
+        all_input = [0, 0, 0, number]
         if s == "1":
             while (1):
                 try:
-                    print("Please enter interval or approximate with enter\n>>>", end=" ")
+                    print(
+                        "Please enter interval or approximate with enter. For simple interval method set start approximation twice\n>>>",
+                        end=" ")
                     all_input[0], all_input[1] = float(input().strip().replace(",", ".")), float(
                         input().strip().replace(",", "."))
                     break
@@ -134,4 +151,3 @@ class Executor:
         for i in range(dim):
             print("e", i + 1, " = ", errors[i], sep="")
         print()
-
