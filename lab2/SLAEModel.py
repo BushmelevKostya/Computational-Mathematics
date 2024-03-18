@@ -1,13 +1,41 @@
 import math
 
+from FileReader import FileReader
 from Model import *
 
 class SLAEModel:
 
-    def print_answers(self, dim, arr_var):
-        for i in range(dim):
-            print(i + 1, " = ", round(arr_var[i], 5), sep="")
-        print()
+    def print_answers(self, dim, arr_var, keys):
+        print("Please enter:\n"
+              "1 for console output\n"
+              "2 for file output\n"
+              ">>>", end=" ")
+        while 1:
+            s = input().strip()
+            if s == "1":
+                for i in range(dim):
+                    print(keys[i], " = ", round(arr_var[i], 5), sep="")
+                print()
+                break
+            elif s == "2":
+                while 1:
+                    print("Please enter name of file\n>>>", end=" ")
+                    s = input().strip()
+                    if s == "":
+                        continue
+                    path = "output/" + s
+                    fileReader = FileReader(path)
+                    try:
+                        fileReader.write_answer(keys, arr_var, dim)
+                        break
+                    except FileNotFoundError as e:
+                        print(e.args[0])
+                break
+            else:
+                print("Wrong value! Please enter:\n"
+                      "1 for console output\n"
+                      "2 for file output\n"
+                      ">>>", end=" ")
 
     def calc_func(self, coefficients, dim, dot):
         res = 0
@@ -27,7 +55,8 @@ class SLAEModel:
                 borders[1] = x
             n += 1
         x = (borders[0] + borders[1]) / 2
-        self.print_answers(3, [x, self.calc_func(coefficients, dim, x), n])
+        keys = ["x", "f(x)", "count of operation"]
+        self.print_answers(3, [x, self.calc_func(coefficients, dim, x), n], keys)
 
     def secant_alg(self, approx, coefficients, dim, error):
         n = 0
@@ -39,7 +68,8 @@ class SLAEModel:
             next_y = self.calc_func(coefficients, dim, approx[1])
             func_values[0], func_values[1] = func_values[1], next_y
             n += 1
-        self.print_answers(3, [approx[1], self.calc_func(coefficients, dim, approx[1]), n])
+        keys = ["x", "f(x)", "count of operation"]
+        self.print_answers(3, [approx[1], self.calc_func(coefficients, dim, approx[1]), n], keys)
 
     def simple_iteration_alg(self, approx, coefficients, new_coefficients, dim, degree, error):
         n = 1
@@ -54,7 +84,8 @@ class SLAEModel:
                 break
             approx[0] = approx[1]
             n += 1
-        self.print_answers(3, [approx[1], self.calc_func(coefficients, dim, approx[1]), n])
+        keys = ["x", "f(x)", "count of operation"]
+        self.print_answers(3, [approx[1], self.calc_func(coefficients, dim, approx[1]), n], keys)
 
     def simple_iteration_transcendental_alg(self, approx, error):
         n = 1
@@ -64,7 +95,8 @@ class SLAEModel:
                 break
             approx[0] = approx[1]
             n += 1
-        self.print_answers(2, [approx[1], n])
+        keys = ["x", "count of operation"]
+        self.print_answers(2, [approx[1], n], keys)
 
     def Newton_alg(self, approx, error, dim):
         coefficients = [[0, 0], [0, 0]]
@@ -80,7 +112,8 @@ class SLAEModel:
             if abs(approx[0] - temp[0]) <= error and abs(approx[1] - temp[1]) <= error:
                 break
             n += 1
-        self.print_answers(dim, [approx[0], approx[1], n])
+        keys = ["x", "y", "count of operation"]
+        self.print_answers(dim, [approx[0], approx[1], n], keys)
 
     def Newton_transcendental_alg(self, approx, error, dim):
         coefficients = [[0, 0], [0, 0]]
@@ -96,4 +129,5 @@ class SLAEModel:
             if abs(approx[0] - temp[0]) <= error and abs(approx[1] - temp[1]) <= error:
                 break
             n += 1
-        self.print_answers(dim, [approx[0], approx[1], n])
+        keys = ["x", "y", "count of operation"]
+        self.print_answers(dim, [approx[0], approx[1], n], keys)

@@ -52,3 +52,13 @@ class FileReader:
             raise FileNotFoundError("Wrong type in dimension!")
         except IndexError:
             raise FileNotFoundError("Data in dimension is not valid")
+
+    def write_answer(self, keys, value, dim):
+        try:
+            with open(self.filepath, "w") as file:
+                for i in range(dim):
+                    file.write(str(keys[i]) + " = " + str(round(value[i], 5)) + "\n")
+        except FileNotFoundError:
+            raise FileNotFoundError("This file doesn't exist! Try another name of file")
+        except PermissionError:
+            raise FileNotFoundError("You haven't enough permissions for read this file! Try another name of file")
