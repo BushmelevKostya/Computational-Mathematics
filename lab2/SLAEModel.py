@@ -1,5 +1,6 @@
 import math
 import sympy as sp
+import numpy as np
 
 from FileReader import FileReader
 from Model import *
@@ -155,7 +156,20 @@ class SLAEModel:
             approx[0] = sp.Symbol('x')
             self.simple_iteration_alg(approx, coefficients, dim, error)
 
-    def check_roots(self, coefficients, x):
-        x = sp.Symbol('x')
-        f = sum(coefficients[i] * x ** i for i in range(len(coefficients)))
-        return polynomial
+    def check_roots(self, coefficients, borders):
+        if borders[1] <= borders[0]:
+            return False
+
+        left_value = np.polyval(coefficients, borders[0])
+        right_value = np.polyval(coefficients, borders[1])
+
+        if np.sign(left_value) == np.sign(right_value):
+            return False
+
+        epsilon = 1e-6
+        derivative_left = (np.polyval(coefficients, borders[0] + epsilon) - left_value) / epsilon
+        derivative_right = (right_value - np.polyval(coefficients, borders[1] - epsilon)) / epsilon
+
+        if np.sign(derivative_left) * np.sign(derivative_right) < 0:
+            return True
+        return False

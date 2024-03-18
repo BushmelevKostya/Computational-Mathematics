@@ -14,12 +14,12 @@ class Executor:
         while 1:
             s = input().strip()
             if s == "1":
-                print("Enter number of system:\n"
-                      "1 - f(x) = x^3 + 2.84x^2-5.606x-14.766\n"
-                      "2 - f(x) = x^5 - 8*x^2 - 4\n"
-                      "3 - f(x) = 2^x - cos(x) - 3\n"
-                      ">>>", end=" ")
                 while 1:
+                    print("Enter number of system:\n"
+                          "1 - f(x) = x^3 + 2.84x^2-5.606x-14.766\n"
+                          "2 - f(x) = x^5 - 8*x^2 - 4\n"
+                          "3 - f(x) = 2^x - cos(x) - 3\n"
+                          ">>>", end=" ")
                     s = input().strip()
                     if s == "1":
                         dim = 3
@@ -27,7 +27,11 @@ class Executor:
                         borders = [inp[0], inp[1]]
                         error = inp[2]
                         coefficients = [-14.766, -5.606, 2.84, 1]
-                        self.model.do_task(borders, coefficients, dim, error, inp[3])
+                        if self.model.check_roots(coefficients, borders):
+                            self.model.do_task(borders, coefficients, dim, error, inp[3])
+                        else:
+                            print("There are no roots on your interval!")
+                            continue
                         break
                     elif s == "2":
                         dim = 5
@@ -35,6 +39,11 @@ class Executor:
                         approx = [inp[0], inp[1]]
                         error = inp[2]
                         coefficients = [-4, 0, -8, 0, 0, 1]
+                        if self.model.check_roots(coefficients, approx):
+                            self.model.do_task(approx, coefficients, dim, error, inp[3])
+                        else:
+                            print("There are no roots on your interval!")
+                            continue
                         self.model.do_task(approx, coefficients, dim, error, inp[3])
                         break
                     elif s == "3":
@@ -43,14 +52,15 @@ class Executor:
                         approx = [inp[0], inp[1]]
                         error = inp[2]
                         coefficients = self.model.create_polinim(1)
+                        if self.model.check_roots(coefficients, approx):
+                            self.model.do_task(approx, coefficients, dim, error, inp[3])
+                        else:
+                            print("There are no roots on your interval!")
+                            continue
                         self.model.do_task(approx, coefficients, dim, error, inp[3])
                         break
                     else:
-                        print("Wrong value! Enter number of system:\n"
-                              "1 - f(x) = x^3 + 2.84x^2-5.606x-14.766\n"
-                              "2 - f(x) = x^5 - 8*x^2 - 4\n"
-                              "3 - f(x) = 2^x - cos(x) - 3\n"
-                              ">>>", end=" ")
+                        print("Wrong value!")
                         continue
                 break
             elif s == "2":
@@ -101,7 +111,8 @@ class Executor:
             while (1):
                 try:
                     print(
-                        "Please enter interval or approximate with enter. For simple interval method set start approximation twice\n>>>",
+                        "Please enter interval or approximate with enter. Function must be monotone on interval."
+                        " For simple interval method set start approximation twice\n>>>",
                         end=" ")
                     all_input[0], all_input[1] = float(input().strip().replace(",", ".")), float(
                         input().strip().replace(",", "."))
@@ -131,23 +142,3 @@ class Executor:
                 except FileNotFoundError as e:
                     print(e.args[0])
         return all_input
-
-    def do_task(self):
-        dim = self.dim
-        matrix = self.matrix
-        arr_var = self.arr_var
-
-        model = Model(dim, matrix, arr_var)
-        print("Input dimension:", dim, "\n")
-        print("Input matrix:")
-        model.print_task(matrix, arr_var)
-        results = model.G_alg()
-        if results == -1:
-            return
-        print("Values of answers:")
-        model.print_answers(results)
-        errors = model.calc_errors(results)
-        print("Values of errors:")
-        for i in range(dim):
-            print("e", i + 1, " = ", errors[i], sep="")
-        print()
