@@ -8,5 +8,7 @@ if __name__ == '__main__':
     polinom_2_pairs = [[1.1, 3.5], [2.3, 4.1], [3.7, 5.2], [5.4, 8.3], [6.8, 14.8], [7.5, 21.2]]
     polinom_3_pairs = [[1, 1], [2, 8], [3, 27], [4, 64], [5, 125], [6, 216]]
     power_pairs = [[1, 2], [2, 16], [3, 54], [4, 128], [5, 250], [6, 400]]
-    answers = power_approx(power_pairs)
+    exp_pairs = [[1, 6.8], [2, 10], [3, 20], [-1, 4], [-2, 1.5]]
+    log_pairs = [[1, 1], [2, 4], [3, 7], [5, 8], [8, 12]]
+    answers = log_approx(log_pairs)
     power_output(answers)

@@ -181,33 +181,107 @@ def power_approx(pairs):
         s_y += y
         s_xy += x * y
     # calc coefs
-    delta = s_xx * len(pairs) - s_x ** 2
-    delta1 = s_xy * len(pairs) - s_x * s_y
-    delta2 = s_xx * s_y - s_x * s_xy
-    a = delta1 / delta
-    b = delta2 / delta
+    b = (len(pairs) * s_xy - s_x * s_y) / (len(pairs) * s_xx - s_x ** 2)
+    a = math.exp((s_y - b * s_x) / len(pairs))
     # calc diff
     new_pairs = []
     diff = []
     sqr_diff = 0
     for pair in pairs:
-        new_pairs.append([pair[0], a * math.log(pair[0]) + b])
-        diff.append(new_pairs[-1][1] - math.log(pair[1]))
+        new_pairs.append([pair[0], a * pair[0] ** b])
+        diff.append(new_pairs[-1][1] - pair[1])
         sqr_diff += diff[-1] ** 2
     sqr_diff /= (len(pairs))
     sqr_diff = sqr_diff ** 0.5
     # det_coef
     fi_avg = 0
     for pair in new_pairs:
-        fi_avg += math.log(pair[1])
+        fi_avg += pair[1]
     fi_avg /= len(pairs)
     chisl = 0
     znam = 0
     for i in range(len(pairs)):
-        chisl += (math.log(pairs[i][1]) - new_pairs[i][1]) ** 2
-        znam += (math.log(pairs[i][1]) - fi_avg) ** 2
+        chisl += (pairs[i][1] - new_pairs[i][1]) ** 2
+        znam += (pairs[i][1] - fi_avg) ** 2
     R = 1 - chisl / znam
     return [pairs, new_pairs, diff, sqr_diff, R, [a, b]]
 
-# def exp:
-# def log:
+
+def exp_approx(pairs):
+    s_x = 0
+    s_xx = 0
+    s_y = 0
+    s_xy = 0
+    # calc sum
+    for pair in pairs:
+        x = pair[0]
+        y = math.log(pair[1])
+        s_x += x
+        s_xx += x ** 2
+        s_y += y
+        s_xy += x * y
+    # calc coefs
+    b = (len(pairs) * s_xy - s_x * s_y) / (len(pairs) * s_xx - s_x ** 2)
+    a = math.exp((s_y - b * s_x) / len(pairs))
+    # calc diff
+    new_pairs = []
+    diff = []
+    sqr_diff = 0
+    for pair in pairs:
+        new_pairs.append([pair[0], a * math.exp(pair[0] * b)])
+        diff.append(new_pairs[-1][1] - pair[1])
+        sqr_diff += diff[-1] ** 2
+    sqr_diff /= (len(pairs))
+    sqr_diff = sqr_diff ** 0.5
+    # det_coef
+    fi_avg = 0
+    for pair in new_pairs:
+        fi_avg += pair[1]
+    fi_avg /= len(pairs)
+    chisl = 0
+    znam = 0
+    for i in range(len(pairs)):
+        chisl += (pairs[i][1] - new_pairs[i][1]) ** 2
+        znam += (pairs[i][1] - fi_avg) ** 2
+    R = 1 - chisl / znam
+    return [pairs, new_pairs, diff, sqr_diff, R, [a, b]]
+
+
+def log_approx(pairs):
+    s_x = 0
+    s_xx = 0
+    s_y = 0
+    s_xy = 0
+    # calc sum
+    for pair in pairs:
+        x = math.log(pair[0])
+        y = pair[1]
+        s_x += x
+        s_xx += x ** 2
+        s_y += y
+        s_xy += x * y
+    # calc coefs
+    a = (len(pairs) * s_xy - s_x * s_y) / (len(pairs) * s_xx - s_x ** 2)
+    b = (s_y - a * s_x) / len(pairs)
+    # calc diff
+    new_pairs = []
+    diff = []
+    sqr_diff = 0
+    for pair in pairs:
+        new_pairs.append([pair[0], a * math.log(pair[0]) + b])
+        diff.append(new_pairs[-1][1] - pair[1])
+        sqr_diff += diff[-1] ** 2
+    sqr_diff /= (len(pairs))
+    sqr_diff = sqr_diff ** 0.5
+    # det_coef
+    fi_avg = 0
+    for pair in new_pairs:
+        fi_avg += pair[1]
+    fi_avg /= len(pairs)
+    chisl = 0
+    znam = 0
+    for i in range(len(pairs)):
+        chisl += (pairs[i][1] - new_pairs[i][1]) ** 2
+        znam += (pairs[i][1] - fi_avg) ** 2
+    R = 1 - chisl / znam
+    return [pairs, new_pairs, diff, sqr_diff, R, [a, b]]
