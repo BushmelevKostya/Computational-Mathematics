@@ -1,3 +1,24 @@
+def print_best_answer(answers, best_num):
+    if best_num == 0:
+        print("Linear approximation the best method!")
+        linear_output(answers[best_num])
+    elif best_num == 1:
+        print("Polinomial approximation of the second degree is the best method!")
+        polinom_2_output(answers[best_num])
+    elif best_num == 2:
+        print("Polinomial approximation of the third degree is the best method!")
+        polinom_3_output(answers[best_num])
+    elif best_num == 3:
+        print("Power approximation is the best method!")
+        power_output(answers[best_num])
+    elif best_num == 4:
+        print("Exponential approximation is the best method!")
+        power_output(answers[best_num])
+    elif best_num == 5:
+        print("Logarithmic approximation is the best method!")
+        linear_output(answers[best_num])
+
+
 def linear_output(answers):
     print("a: ", round(answers[6][0], 2))
     print("b: ", round(answers[6][1], 2))

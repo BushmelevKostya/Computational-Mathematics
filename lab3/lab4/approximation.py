@@ -2,6 +2,22 @@ import math
 
 from sympy import symbols, Eq, solve
 from lab4.validate import try_to_int
+from lab4.output import *
+
+
+def find_best_method(pairs):
+    answers = [linear_approx(pairs), polinom_2_approx(pairs), polinom_3_approx(pairs), power_approx(pairs),
+               exp_approx(pairs), log_approx(pairs)]
+    best_num = 0
+    best_sqr_diff = 10 ** 10
+    for i in range(6):
+        try:
+            if answers[i][3] < best_sqr_diff:
+                best_num = i
+                best_sqr_diff = answers[i][3]
+        except TypeError:
+            continue
+    print_best_answer(answers, best_num)
 
 
 def linear_approx(pairs):
@@ -174,8 +190,12 @@ def power_approx(pairs):
     s_xy = 0
     # calc sum
     for pair in pairs:
-        x = math.log(pair[0])
-        y = math.log(pair[1])
+        try:
+            x = math.log(pair[0])
+            y = math.log(pair[1])
+        except ValueError:
+            print("Power approx can't be check. Please set positive argument for logarithmic function!")
+            return
         s_x += x
         s_xx += x ** 2
         s_y += y
@@ -214,8 +234,12 @@ def exp_approx(pairs):
     s_xy = 0
     # calc sum
     for pair in pairs:
-        x = pair[0]
-        y = math.log(pair[1])
+        try:
+            x = pair[0]
+            y = math.log(pair[1])
+        except ValueError:
+            print("Exponential approx can't be check. Please set positive argument for logarithmic function!")
+            return
         s_x += x
         s_xx += x ** 2
         s_y += y
@@ -254,8 +278,12 @@ def log_approx(pairs):
     s_xy = 0
     # calc sum
     for pair in pairs:
-        x = math.log(pair[0])
-        y = pair[1]
+        try:
+            x = math.log(pair[0])
+            y = pair[1]
+        except ValueError:
+            print("Logarithmic approx can't be check. Please set positive argument for logarithmic function!")
+            return
         s_x += x
         s_xx += x ** 2
         s_y += y
