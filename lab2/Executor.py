@@ -1,5 +1,7 @@
 from FileReader import *
 from SLAEModel import *
+import numpy as np
+import matplotlib.pyplot as plt
 
 
 class Executor:
@@ -10,8 +12,8 @@ class Executor:
         self.model = SLAEModel()
 
     def say_hello(self):
-        print("Hello! Please enter:\n1 for linear equaiton\n2 for unlinear equation\n>>>", end=" ")
         while 1:
+            print("Hello! Please enter:\n1 for linear equaiton\n2 for unlinear equation\n>>>", end=" ")
             s = input().strip()
             if s == "1":
                 while 1:
@@ -27,7 +29,12 @@ class Executor:
                         borders = [inp[0], inp[1]]
                         error = inp[2]
                         coefficients = [-14.766, -5.606, 2.84, 1]
-                        if self.model.check_roots(coefficients, borders):
+                        x = np.linspace(borders[0] - 1, borders[1] + 1, 100)
+                        y = x**3 + 2.84*x**2 - 5.606*x - 14.766
+                        self.draw_graph(borders, x, y)
+                        coefficients_p = coefficients[::-1]
+
+                        if self.model.check_roots(coefficients_p, borders):
                             self.model.do_task(borders, coefficients, dim, error, inp[3])
                         else:
                             print("There are no roots on your interval!")
@@ -39,52 +46,70 @@ class Executor:
                         approx = [inp[0], inp[1]]
                         error = inp[2]
                         coefficients = [-4, 0, -8, 0, 0, 1]
-                        if self.model.check_roots(coefficients, approx):
+                        x = np.linspace(approx[0] - 1, approx[1] + 1, 100)
+                        y = x ** 5 - 8 * x ** 2 - 4
+                        self.draw_graph(approx, x, y)
+                        coefficients_p = coefficients[::-1]
+
+                        if self.model.check_roots(coefficients_p, approx):
                             self.model.do_task(approx, coefficients, dim, error, inp[3])
                         else:
                             print("There are no roots on your interval!")
                             continue
-                        self.model.do_task(approx, coefficients, dim, error, inp[3])
                         break
                     elif s == "3":
-                        dim = 6
+                        dim = 5
                         inp = self.all_input(2)
                         approx = [inp[0], inp[1]]
                         error = inp[2]
                         coefficients = self.model.create_polinim(1)
-                        if self.model.check_roots(coefficients, approx):
+                        x = np.linspace(approx[0] - 1, approx[1] + 1, 100)
+                        y = 2 ** x - np.cos(x) - 3
+                        self.draw_graph(approx, x, y)
+                        coefficients_p = coefficients[::-1]
+
+                        if self.model.check_roots(coefficients_p, approx):
                             self.model.do_task(approx, coefficients, dim, error, inp[3])
                         else:
                             print("There are no roots on your interval!")
                             continue
-                        self.model.do_task(approx, coefficients, dim, error, inp[3])
                         break
                     else:
                         print("Wrong value!")
                         continue
-                break
+
             elif s == "2":
                 while 1:
                     print("Enter number of equation:\n"
                           "1 - f(x, y) = x^2 + y^2 -4, g(x, y) = y - 3 * x^2\n"
-                          "2 - f(x, y) = cos(x-1) + y - 0.5, g(x, y) = x - cos(y) - 3\n"
+                          "2 - f(x, y) = 6 * y + x ** 2 - 18 , g(x, y) = 2 * x ** 2 + 0.5 * y ** 2 - 8\n"
                           ">>>", end=" ")
                     s = input().strip()
                     if s == "1":
                         inp = self.all_input(2)
                         approx = [inp[0], inp[1]]
                         error = inp[2]
+                        x = np.linspace(approx[0] - 1, approx[1] + 1, 100)
+                        y1 = np.sqrt(np.maximum(0, 4 - x ** 2))
+                        y2 = 3 * x ** 2
+                        self.draw_graph_two_vars(x, y1, y2)
+
                         self.model.Newton_alg(approx, error, 3)
                         break
                     elif s == "2":
                         inp = self.all_input(2)
                         approx = [inp[0], inp[1]]
                         error = inp[2]
-                        self.model.Newton_transcendental_alg(approx, error, 3)
+                        x = np.linspace(approx[0] - 1, approx[1] + 1, 100)
+                        y1 = np.sqrt(16 - 4 * x ** 2)
+                        y2 = - x ** 2 / 6 + 3
+
+                        self.draw_graph_two_vars(x, y1, y2)
+
+                        self.model.Newton_alg(approx, error, 3)
                         break
                     else:
                         continue
-                break
             else:
                 print("Please enter:\n1 for linear equaiton\n2 for unlinear equation\n>>>", end=" ")
 
@@ -142,3 +167,21 @@ class Executor:
                 except FileNotFoundError as e:
                     print(e.args[0])
         return all_input
+
+    def draw_graph(self, borders, x, y):
+        plt.plot(x, y)
+        plt.title('График функции')
+        plt.xlabel('x')
+        plt.ylabel('f(x)')
+        plt.grid(True)
+        plt.show()
+
+    def draw_graph_two_vars(self, x, y1, y2):
+        plt.plot(x, y1, label='y1')
+        plt.plot(x, y2, label='y2')
+        plt.title('Графики двух функций')
+        plt.xlabel('x')
+        plt.ylabel('y')
+        plt.legend()
+        plt.grid(True)
+        plt.show()
