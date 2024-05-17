@@ -194,7 +194,6 @@ def power_approx(pairs):
             x = math.log(pair[0])
             y = math.log(pair[1])
         except ValueError:
-            print("Power approx can't be check. Please set positive argument for logarithmic function!")
             return
         s_x += x
         s_xx += x ** 2
@@ -238,7 +237,6 @@ def exp_approx(pairs):
             x = pair[0]
             y = math.log(pair[1])
         except ValueError:
-            print("Exponential approx can't be check. Please set positive argument for logarithmic function!")
             return
         s_x += x
         s_xx += x ** 2
@@ -282,7 +280,6 @@ def log_approx(pairs):
             x = math.log(pair[0])
             y = pair[1]
         except ValueError:
-            print("Logarithmic approx can't be check. Please set positive argument for logarithmic function!")
             return
         s_x += x
         s_xx += x ** 2
