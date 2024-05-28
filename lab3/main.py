@@ -19,9 +19,9 @@ def my_func_2(x):
 borders = [0, 1]
 count = 5
 pairs = func_to_pairs(my_func_1, borders, count)
-print(pairs)
 pairs = [[0.1, 1.25], [0.2, 2.38], [0.3, 3.79], [0.4, 5.44], [0.5, 7.14]]
-x = 0.35
+print(pairs)
+x = 0.11
 run_methods(pairs, x)
 # poly_str1 = "(x-1)"
 # poly_str2 = "(x-1)"
