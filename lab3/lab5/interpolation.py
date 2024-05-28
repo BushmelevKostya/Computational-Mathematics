@@ -11,16 +11,16 @@ def run_methods(pairs, dot):
 
     middle = (pairs[0][0] + pairs[n - 1][0]) // 2
     h = pairs[1][0] - pairs[0][0]
-    # if dot < middle:
-    res, eq = first_newton_formula(dot, pairs[0][0], h, diff_matrix, n)
-    newton_output(res, dot, eq)
-    res = second_gauss_formula(dot, pairs[(n - 1) // 2][0], h, diff_matrix, n)
-    gauss_output(res, dot, eq)
-    # else:
-    #     res = second_newton_formula(dot, pairs[n - 1][0], h, diff_matrix, n)
-    #     newton_output(res, dot, eq)
-    #     res = first_gauss_formula(dot, pairs[(n - 1) // 2][0], h, diff_matrix, n)
-    #     gauss_output(res, dot, eq)
+    if dot < middle:
+        res, eq = first_newton_formula(dot, pairs[0][0], h, diff_matrix, n)
+        newton_output(res, dot, eq)
+        res, eq = second_gauss_formula(dot, pairs[(n - 1) // 2][0], h, diff_matrix, n)
+        gauss_output(res, dot, eq)
+    else:
+        res, eq = second_newton_formula(dot, pairs[n - 1][0], h, diff_matrix, n)
+        newton_output(res, dot, eq)
+        res, eq = first_gauss_formula(dot, pairs[(n - 1) // 2][0], h, diff_matrix, n)
+        gauss_output(res, dot, eq)
 
 
 def calc_lagr_coef(pairs, num, dot, n, y):
@@ -56,43 +56,74 @@ def first_newton_product_t(t, n, border, h):
         eq2 = coef_x_1 + "x" + ("" if float(coef_x_2) < 0 else "+") + coef_x_2
         eq = multiply_polynomial_strings(eq, eq2)
         coef_x_2 = str(float(coef_x_2) - 1)
-        print(eq2, " - ", eq)
-    print()
     return p, eq
 
 
-def second_newton_product_t(t, n):
+def second_newton_product_t(t, n, border, h):
     p = 1
+    eq = "1"
+    coef_x_1 = str(1 / h)
+    coef_x_2 = str(-border / h)
     for i in range(n):
         p *= t
         t += 1
-    return p
+
+        eq2 = coef_x_1 + "x" + ("" if float(coef_x_2) < 0 else "+") + coef_x_2
+        eq = multiply_polynomial_strings(eq, eq2)
+        coef_x_2 = str(float(coef_x_2) + 1)
+    return p, eq
 
 
-def first_gauss_product_t(t, n):
+def first_gauss_product_t(t, n, border, h):
     p = 1
     t1 = t2 = t
+
+    eq = "1"
+    coef_x_1 = str(1 / h)
+    coef_x_2_1 = str(-border / h)
+    coef_x_2_2 = str(-border / h)
     for i in range(n):
         if i % 2 != 0:
             p *= t1
             t2 -= 1
+
+            eq2 = coef_x_1 + "x" + ("" if float(coef_x_2_1) < 0 else "+") + coef_x_2_1
+            eq = multiply_polynomial_strings(eq, eq2)
+            coef_x_2_2 = str(float(coef_x_2_2) - 1)
         else:
             p *= t2
             t1 += 1
-    return p
+
+            eq2 = coef_x_1 + "x" + ("" if float(coef_x_2_2) < 0 else "+") + coef_x_2_2
+            eq = multiply_polynomial_strings(eq, eq2)
+            coef_x_2_1 = str(float(coef_x_2_1) + 1)
+    return p, eq
 
 
-def second_gauss_product_t(t, n):
+def second_gauss_product_t(t, n, border, h):
     p = 1
     t1 = t2 = t
+
+    eq = "1"
+    coef_x_1 = str(1 / h)
+    coef_x_2_1 = str(-border / h)
+    coef_x_2_2 = str(-border / h)
     for i in range(n):
         if i % 2 != 0:
             p *= t1
             t2 += 1
+
+            eq2 = coef_x_1 + "x" + ("" if float(coef_x_2_1) < 0 else "+") + coef_x_2_1
+            eq = multiply_polynomial_strings(eq, eq2)
+            coef_x_2_2 = str(float(coef_x_2_2) + 1)
         else:
             p *= t2
             t1 -= 1
-    return p
+
+            eq2 = coef_x_1 + "x" + ("" if float(coef_x_2_2) < 0 else "+") + coef_x_2_2
+            eq = multiply_polynomial_strings(eq, eq2)
+            coef_x_2_1 = str(float(coef_x_2_1) - 1)
+    return p, eq
 
 
 def calc_diff_matrix(pairs, n):
@@ -123,9 +154,16 @@ def first_newton_formula(dot, border, h, diff_matrix, n):
 def second_newton_formula(dot, border, h, diff_matrix, n):
     s = 0
     t = (dot - border) / h
+    equation = "0"
     for i in range(n):
-        s += diff_matrix[n - 1 - i][i] * second_newton_product_t(t, i) / math.factorial(i)
-    return s
+        product, eq = second_newton_product_t(t, i, border, h)
+        fact = math.factorial(i)
+        s += diff_matrix[n - 1 - i][i] * product / fact
+
+        eq = multiply_polynomial_strings(eq, str(diff_matrix[n - 1 - i][i] / fact))
+        equation = plus_polynomial_strings(equation, eq)
+        # print(equation)
+    return s, equation
 
 
 def first_gauss_get_coef(diff_matrix, n, i):
@@ -139,17 +177,31 @@ def second_gauss_get_coef(diff_matrix, n, i):
 def first_gauss_formula(dot, border, h, diff_matrix, n):
     s = 0
     t = (dot - border) / h
+    equation = "0"
     for i in range(n):
-        s += first_gauss_get_coef(diff_matrix, n, i) * first_gauss_product_t(t, i) / math.factorial(i)
-    return s
+        coef = first_gauss_get_coef(diff_matrix, n, i)
+        product, eq = first_gauss_product_t(t, i, border, h)
+        fact = math.factorial(i)
+        s += coef * product / fact
+
+        eq = multiply_polynomial_strings(eq, str(coef / fact))
+        equation = plus_polynomial_strings(equation, eq)
+    return s, equation
 
 
 def second_gauss_formula(dot, border, h, diff_matrix, n):
     s = 0
     t = (dot - border) / h
+    equation = "0"
     for i in range(n):
-        s += second_gauss_get_coef(diff_matrix, n, i) * second_gauss_product_t(t, i) / math.factorial(i)
-    return s
+        coef = second_gauss_get_coef(diff_matrix, n, i)
+        product, eq = second_gauss_product_t(t, i, border, h)
+        fact = math.factorial(i)
+        s += coef * product / fact
+
+        eq = multiply_polynomial_strings(eq, str(coef / fact))
+        equation = plus_polynomial_strings(equation, eq)
+    return s, equation
 
 
 def lagrange(pairs, dot):
