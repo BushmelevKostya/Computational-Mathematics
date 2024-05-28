@@ -1,32 +1,42 @@
 import math
 from lab5.output import *
+from lab5.polinoms import *
 
 def run_methods(pairs, dot):
     n = len(pairs)
     diff_matrix = calc_diff_matrix(pairs, n)
     print_diff_matrix(diff_matrix, n)
-    res = lagrange(pairs, dot)
-    lagrange_output(res, dot)
+    res, eq = lagrange(pairs, dot)
+    lagrange_output(res, dot, eq)
 
     middle = (pairs[0][0] + pairs[n - 1][0]) // 2
     h = pairs[1][0] - pairs[0][0]
     if dot < middle:
         res = first_newton_formula(dot, pairs[0][0], h, diff_matrix, n)
-        newton_output(res, dot)
+        newton_output(res, dot, eq)
         res = second_gauss_formula(dot, pairs[(n - 1) // 2][0], h, diff_matrix, n)
-        gauss_output(res, dot)
+        gauss_output(res, dot, eq)
     else:
         res = second_newton_formula(dot, pairs[n - 1][0], h, diff_matrix, n)
-        newton_output(res, dot)
+        newton_output(res, dot, eq)
         res = first_gauss_formula(dot, pairs[(n - 1) // 2][0], h, diff_matrix, n)
-        gauss_output(res, dot)
+        gauss_output(res, dot, eq)
 
-def calc_lagr_coef(pairs, num, dot, n):
+
+def calc_lagr_coef(pairs, num, dot, n, y):
     p = 1
+    eq = "1"
     for i in range(n):
         if i != num:
             p *= (dot - pairs[i][0]) / (pairs[num][0] - pairs[i][0])
-    return p
+            coef1 = str(y / (pairs[num][0] - pairs[i][0]))
+            coef2 = -pairs[i][0] * y / (pairs[num][0] - pairs[i][0])
+            if coef2 > 0:
+                eq = coef1 + "x+" + str(coef2)
+            else:
+                eq = coef1 + "x" + str(coef2)
+            print(eq)
+    return p, eq
 
 
 def first_newton_product_t(t, n):
@@ -124,6 +134,10 @@ def second_gauss_formula(dot, border, h, diff_matrix, n):
 def lagrange(pairs, dot):
     s = 0
     n = len(pairs)
+    equation = "1"
     for i in range(n):
-        s += pairs[i][1] * calc_lagr_coef(pairs, i, dot, n)
-    return s
+        p, eq = calc_lagr_coef(pairs, i, dot, n, pairs[i][1])
+        # print(equation, " - ", eq)
+        s += pairs[i][1] * p
+        equation = multiply_polynomial_strings(equation, eq)
+    return s, equation
