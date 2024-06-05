@@ -13,9 +13,9 @@ def my_input(str):
         return s
 
 
-def get_parameters(f, exact_y, x0, xn, y0, h, eps, n):
+def run_methods(f, exact_y, x0, xn, y0, h, eps, n):
     print()
-    methods = [("Усовершенствованный метод Эйлера", euler_method),
+    methods = [("Метод Эйлера", euler_method),
                ("Метод Рунге-Кутта 4-го порядка", fourth_order_runge_kutta_method),
                ("Метод Милна", milne_method)]
 
@@ -55,7 +55,6 @@ def get_parameters(f, exact_y, x0, xn, y0, h, eps, n):
             else:
                 print(
                     f"Для точности eps={eps} интервал был разбит на n={ni} частей с шагом h={round((xn - x0) / ni, 6)}.\n")
-
             if (len(xs) < 100):
                 print("y:\t[", *map(lambda x: round(x, 5), ys), "]")
                 print("y_точн:\t[", *map(lambda x: round(exact_y(x, x0, y0), 5), xs), "]")
@@ -71,23 +70,26 @@ def get_parameters(f, exact_y, x0, xn, y0, h, eps, n):
         except OverflowError:
             print('-' * 30 + '\n')
             print("! Невозможно вычислить. Число/точность слишком большое.")
+        print('-' * 30)
 
 
-def euler_method(f, x0, xn, y0, h, eps):
-    xs = [x0]
-    ys = [y0]
+def euler_method(f, xs, y0, eps):
+    x0 = xs[0]
+    xn = xs[-1]
+    h = xs[1] - xs[0]
+    ys = []
     while x0 <= xn:
         y = y0 + h * f(x0, y0)
         x0 += h
         xs.append(round(x0, 3))
         ys.append(round(y0, 5))
         y0 = y
-    return [xs, ys]
+    return ys
 
 
-def fourth_order_runge_kutta_method(f, x0, xn, y0, h, eps):
-    ni = int((xn - x0) / h)
-    xs = [x0 + i * ((xn - x0) / ni) for i in range(ni + 1)]
+def fourth_order_runge_kutta_method(f, xs, y0, eps):
+    # ni = int((xn - x0) / h)
+    # xs = [x0 + i * ((xn - x0) / ni) for i in range(ni + 1)]
     ys = [y0]
     h = xs[1] - xs[0]
     for i in range(len(xs)):
@@ -96,14 +98,14 @@ def fourth_order_runge_kutta_method(f, x0, xn, y0, h, eps):
         k3 = h * f(xs[i] + h / 2, ys[i] + k2 / 2)
         k4 = h * f(xs[i] + h, ys[i] + k3)
         ys.append(ys[i] + 1 / 6 * (k1 + 2 * k2 + 2 * k3 + k4))
-    xs = [round(x, 3) for x in xs]
+    # xs = [round(x, 3) for x in xs]
     ys = [round(y, 6) for y in ys][:-1]
-    return xs, ys
+    return ys
 
 
-def milne_method(f, x0, xn, y0, h, eps):
-    ni = int((xn - x0) / h)
-    xs = [x0 + i * ((xn - x0) / ni) for i in range(ni + 1)]
+def milne_method(f, xs, y0, eps):
+    # ni = int((xn - x0) / h)
+    # xs = [x0 + i * ((xn - x0) / ni) for i in range(ni + 1)]
     n = len(xs)
     h = xs[1] - xs[0]
     y = [y0]
@@ -128,6 +130,6 @@ def milne_method(f, x0, xn, y0, h, eps):
             y_next = yc
 
         y.append(y_next)
-    xs = [round(x, 3) for x in xs]
+    # xs = [round(x, 3) for x in xs]
     y = [round(yi, 6) for yi in y]
-    return xs, y
+    return y

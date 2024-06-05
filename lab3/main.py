@@ -28,7 +28,7 @@ x0, xn = 1, 1.5
 h = 0.1
 n = 6
 eps = 0.01
-get_parameters(f, exact_y, x0, xn, y0, h, eps, n)
+run_methods(f, exact_y, x0, xn, y0, h, eps, n)
 # res = euler_method(f_3, x0, xn, y0, h, eps)
 # print(res[0])
 # print(res[1])
