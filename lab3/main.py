@@ -1,33 +1,40 @@
-from lab5.interpolation import *
-from lab5.polinoms import *
+import math
+
+from lab6.methods import *
+from math import exp, sin, cos
 
 
-def func_to_pairs(func, borders, count):
-    step = (borders[1] - borders[0]) / (count - 1)
-    pairs = [[borders[0] + i * step, func(borders[0] + i * step)] for i in range(count)]
-    return pairs
+def f_1(x, y):
+
+    return f, exact_y
 
 
-def my_func_1(x):
-    return math.exp(x)
-
-
-def my_func_2(x):
-    return x ** 2
-
-
-borders = [0, 1]
-count = 5
-pairs = func_to_pairs(my_func_1, borders, count)
-pairs = [[0.1, 1.25], [0.2, 2.38], [0.3, 3.79], [0.4, 5.44], [0.5, 7.14]]
-print(pairs)
-x = 0.11
-run_methods(pairs, x)
-# poly_str1 = "(x-1)"
-# poly_str2 = "(x-1)"
-# res1 = parse_polynomial(poly_str1)
-# res2 = parse_polynomial(poly_str2)
-# print(res1)
-# print(res2)
-# result = multiply_polynomial_strings(poly_str1, poly_str2)
-# print(result)
+# '1. y + (1 + x)*y^2'
+# '2. x + y'
+# '3. sin(x) - y'
+n = 1
+if n == 1:
+    f = lambda x, y: y + (1 + x) * y ** 2
+    exact_y = lambda x, x0, y0: -exp(x) / (x * exp(x) - (x0 * exp(x0) * y0 + exp(x0)) / y0)
+elif n == 2:
+    f = lambda x, y: x + y
+    exact_y = lambda x, x0, y0: exp(x - x0) * (y0 + x0 + 1) - x - 1
+else:
+    f = lambda x, y: sin(x) - y
+    exact_y = lambda x, x0, y0: (2 * exp(x0) * y0 - exp(x0) * sin(x0) + exp(x0) * cos(x0)) / (2 * exp(x)) + (
+        sin(x)) / 2 - (cos(x)) / 2
+y0 = -1
+x0, xn = 1, 1.5
+h = 0.1
+n = 6
+eps = 0.01
+get_parameters(f, exact_y, x0, xn, y0, h, eps, n)
+# res = euler_method(f_3, x0, xn, y0, h, eps)
+# print(res[0])
+# print(res[1])
+# res = fourth_order_runge_kutta_method(f_3, x0, xn, y0, h, eps)
+# print(res[0])
+# print(res[1])
+# res = milne_method(f_3, x0, xn, y0, h, eps)
+# print(res[0])
+# print(res[1])
