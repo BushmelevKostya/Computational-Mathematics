@@ -1,17 +1,12 @@
-import math
-
-from lab6.methods import *
 from math import exp, sin, cos
 
-
-def f_1(x, y):
-
-    return f, exact_y
-
+from lab6.methods import *
 
 # '1. y + (1 + x)*y^2'
 # '2. x + y'
 # '3. sin(x) - y'
+
+
 n = 1
 if n == 1:
     f = lambda x, y: y + (1 + x) * y ** 2
@@ -29,12 +24,3 @@ h = 0.1
 n = 6
 eps = 0.01
 run_methods(f, exact_y, x0, xn, y0, h, eps, n)
-# res = euler_method(f_3, x0, xn, y0, h, eps)
-# print(res[0])
-# print(res[1])
-# res = fourth_order_runge_kutta_method(f_3, x0, xn, y0, h, eps)
-# print(res[0])
-# print(res[1])
-# res = milne_method(f_3, x0, xn, y0, h, eps)
-# print(res[0])
-# print(res[1])

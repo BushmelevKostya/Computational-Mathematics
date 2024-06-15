@@ -28,7 +28,7 @@ def select_odu():
 
     while True:
         try:
-            input_func = int(my_input('> Выберите ОДУ [1/2/3/4/5]: '))
+            input_func = int(my_input('> Выберите ОДУ: '))
             if input_func == 1:
                 f = lambda x, y: y + (1 + x) * y ** 2
                 # Точные значения находим через https://mathdf.com/dif/ru/#expr=y'%3Dy%2B(1%2Bx)*y%5E2&func=y&arg=x&vals=x_0%3By_0
@@ -72,7 +72,7 @@ def draw_plot(a, b, func, x0, y0, dx=0.01):
 
 def solve(f, x0, xn, n, y0, exact_y, eps):
     print()
-    methods = [("Усовершенствованный метод Эйлера", improved_euler_method),
+    methods = [("Метод Эйлера", improved_euler_method),
                ("Метод Рунге-Кутта 4-го порядка", fourth_order_runge_kutta_method),
                ("Метод Милна", milne_method)]
 
@@ -110,7 +110,7 @@ def solve(f, x0, xn, n, y0, exact_y, eps):
             # print()
 
             if (iters != 1):
-                print(f"Для точности eps={eps} интервал был разбит на n={ni} частей с шагом h={round((xn - x0) / ni, 6)} за {iters} итераций.\n")
+                print(f"Для eps={eps} интервал был разбит на n={ni} частей с шагом h={round((xn - x0) / ni, 6)} за {iters} итераций.\n")
             else:
                 print(f"Для точности eps={eps} интервал был разбит на n={ni} частей с шагом h={round((xn - x0) / ni, 6)}.\n")
 
@@ -186,4 +186,3 @@ def thanks():
 
 if __name__ == "__main__":
     main()
-    thanks()
